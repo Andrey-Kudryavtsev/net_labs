@@ -11,6 +11,7 @@ git clone <<HTTPS-ссылка на репозиторий>>
 4. Выполнить команду
 ```
 gradle run
+или
 gradle run --args='arg1 arg2'
 ```
 
