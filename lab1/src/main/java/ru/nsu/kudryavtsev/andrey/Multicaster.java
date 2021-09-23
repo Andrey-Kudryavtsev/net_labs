@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.UUID;
 
 public class Multicaster {
+    private static final int TIMEOUT = 1;
     private final UUID uuid = UUID.randomUUID();
     private final int multicastSocketPort = 8000;
     private final HashMap<String, DatagramInfo> timesOfResponse = new HashMap<>(10);
@@ -19,9 +20,8 @@ public class Multicaster {
     }
 
     private void openMulticastSocket() throws IOException {
-        int timeout = 1; // TODO: маленький таймаут
         multicastSocket = new MulticastSocket(multicastSocketPort);
-        multicastSocket.setSoTimeout(timeout);
+        multicastSocket.setSoTimeout(TIMEOUT);
         multicastSocket.joinGroup(groupAddress);
     }
 
