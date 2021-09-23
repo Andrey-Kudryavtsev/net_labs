@@ -6,70 +6,58 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.UUID;
 
-public class Multicaster
-{
+public class Multicaster {
     private final UUID uuid = UUID.randomUUID();
     private final int multicastSocketPort = 8000;
     private final HashMap<String, DatagramInfo> timesOfResponse = new HashMap<>(10);
     private final InetAddress groupAddress;
     private MulticastSocket multicastSocket = null;
 
-    public Multicaster(InetAddress groupAddress)
-    {
+    public Multicaster(InetAddress groupAddress) throws IOException {
         this.groupAddress = groupAddress;
+        openMulticastSocket();
     }
 
-    public void openMulticastSocket() throws IOException
-    {
-        int timeout = 1;
+    private void openMulticastSocket() throws IOException {
+        int timeout = 1; // TODO: маленький таймаут
         multicastSocket = new MulticastSocket(multicastSocketPort);
         multicastSocket.setSoTimeout(timeout);
         multicastSocket.joinGroup(groupAddress);
     }
 
-    public void send(String content) throws IOException
-    {
-        if (content == null || multicastSocket == null)
-        {
+    public void send(String content) throws IOException {
+        if (content == null || multicastSocket == null) {
             return;
         }
         var datagram = new DatagramPacket(content.getBytes(), content.getBytes().length, groupAddress, multicastSocketPort);
         multicastSocket.send(datagram);
     }
 
-    public void sendUUID() throws IOException
-    {
+    public void sendUUID() throws IOException {
         send(uuid.toString());
     }
 
-    public DatagramPacket receive(int length) throws IOException
-    {
-        try
-        {
-            if (multicastSocket == null)
-            {
+    public DatagramPacket receive(int length) throws IOException {
+        try {
+            if (multicastSocket == null) {
                 return null;
             }
             var receivedDatagram = new DatagramPacket(new byte[length], length);
             multicastSocket.receive(receivedDatagram);
             return receivedDatagram;
-        } catch (SocketTimeoutException e)
-        {
+        } catch (SocketTimeoutException e) {
             return null;
         }
     }
 
-    public boolean removeDeadApps(long curTime)
-    {
+    public boolean removeDeadApps(long curTime) {
         boolean isAnyDead = false;
         long maxTimeOfResponse = 10000;
         Iterator<String> iterator = timesOfResponse.keySet().iterator();
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             String key = iterator.next();
             long timeOfResponse = timesOfResponse.get(key).getTimeOfResponse();
-            if ((curTime - timeOfResponse) >= maxTimeOfResponse)
-            {
+            if ((curTime - timeOfResponse) >= maxTimeOfResponse) {
                 iterator.remove();
                 isAnyDead = true;
             }
@@ -77,39 +65,30 @@ public class Multicaster
         return isAnyDead;
     }
 
-    public int getAliveAppCount()
-    {
+    public int getAliveAppCount() {
         return timesOfResponse.size();
     }
 
-    public DatagramInfo add(String uuid, DatagramInfo datagramInfo)
-    {
-        if (uuid == null || datagramInfo == null)
-        {
+    public DatagramInfo add(String uuid, DatagramInfo datagramInfo) {
+        if (uuid == null || datagramInfo == null) {
             throw new IllegalArgumentException();
         }
         return timesOfResponse.put(uuid, datagramInfo);
     }
 
-    public void printAppsAddresses()
-    {
+    public void printAppsAddresses() {
         System.out.println("Alive apps:\t\t\tUUID\t\t\t\tADDRESS");
-        for (String key : timesOfResponse.keySet())
-        {
-            if (uuid.toString().equals(key))
-            {
+        for (String key : timesOfResponse.keySet()) {
+            if (uuid.toString().equals(key)) {
                 System.out.println("(current)\t" + key + ": " + timesOfResponse.get(key).getAddress().toString());
-            } else
-            {
+            } else {
                 System.out.println("\t\t" + key + ": " + timesOfResponse.get(key).getAddress().toString());
             }
         }
     }
 
-    public void shutDown() throws IOException
-    {
-        if (multicastSocket == null)
-        {
+    public void shutDown() throws IOException {
+        if (multicastSocket == null) {
             return;
         }
         multicastSocket.leaveGroup(groupAddress);
