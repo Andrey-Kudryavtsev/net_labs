@@ -121,7 +121,7 @@ public class Protocol {
 
     private static File createFileInUploadDir(String uploadDirPath, String filename) throws IOException {
         File uploadDir = new File(uploadDirPath);
-        if (!(uploadDir.exists())) {
+        if (!(uploadDir.isDirectory())) {
             uploadDir.mkdir();
         }
 
