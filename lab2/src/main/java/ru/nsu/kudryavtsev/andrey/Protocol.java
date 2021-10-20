@@ -28,21 +28,21 @@ public class Protocol {
         clientLogger.info("File was sent to server.   Actual file size = " + actualFileSize);
     }
 
-    public static boolean download(String uploadDir, SpeedInfo speedInfo, InputStream inputStream) throws IOException {
+    public static boolean download(String uploadDir, SpeedInfo speedInfo, int clientID, InputStream inputStream) throws IOException {
         int filenameLength = getFilenameLength(speedInfo, inputStream);
-        serverLogger.info("Got filename length from client:   filename length = " + filenameLength);
+        serverLogger.info("Client " + clientID + " -- Got filename length:   filename length = " + filenameLength);
         String filename = getFilename(filenameLength, speedInfo, inputStream);
-        serverLogger.info("Got filename from client:   filename = " + filename);
+        serverLogger.info("Client " + clientID + " -- Got filename:   filename = " + filename);
         long fileSize = getFileSize(speedInfo, inputStream);
-        serverLogger.info("Got file size from client:   file size = " + fileSize);
+        serverLogger.info("Client " + clientID + " -- Got file size:   file size = " + fileSize);
         if (fileSize == 0) {
-            serverLogger.info("File size equals zero");
+            serverLogger.info("Client " + clientID + " -- File size equals zero");
             return false;
         }
         long actualFileSize = getFile(uploadDir, filename, fileSize, speedInfo, inputStream);
-        serverLogger.info("Got file from client:   actual file size = " + actualFileSize);
+        serverLogger.info("Client " + clientID + " -- Got file:   actual file size = " + actualFileSize);
         if (fileSize != actualFileSize) {
-            serverLogger.info("File size != read file size:   " + fileSize + " != " + actualFileSize);
+            serverLogger.info("Client " + clientID + " -- File size != read file size:   " + fileSize + " != " + actualFileSize);
             return false;
         }
         return true;

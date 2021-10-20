@@ -25,7 +25,7 @@ public class Server {
 
     public Server(int port) throws IOException {
         serverSocket = new ServerSocket(port);
-        logger.info("\t\t\t//--- Server is up ---\\\\");
+        logger.info("\t\t\t//--- Server is up on port " + port + " ---\\\\");
     }
 
     public void start() throws IOException {
@@ -51,8 +51,8 @@ public class Server {
 
         try (newConnection) {
             outputStream = new PrintWriter(newConnection.getOutputStream(), true);
-            logger.info("Start downloading the file from client " + clientID);
-            boolean isDownloadSuccessful = Protocol.download("upload/", speedInfo, newConnection.getInputStream());
+            logger.info("Client " + clientID + " -- Start downloading the file");
+            boolean isDownloadSuccessful = Protocol.download("upload/", speedInfo, clientID, newConnection.getInputStream());
             sendResultMessage(isDownloadSuccessful, clientID, outputStream);
         } catch (SocketTimeoutException e) {
             logger.warn("Client " + clientID + " -- Doesn't respond");

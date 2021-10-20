@@ -18,7 +18,7 @@ public class Client {
         this.filepath = filepath;
         tcpSocket = new Socket(serverAddress, serverPort);
         tcpSocket.setSoTimeout(TIMEOUT_MS);
-        logger.info("Socket was opened");
+        logger.info("Socket was opened. ip: " + serverAddress + "; port: " + serverPort);
     }
 
     public void start() throws IOException {
