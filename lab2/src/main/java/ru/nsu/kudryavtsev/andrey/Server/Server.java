@@ -47,10 +47,9 @@ public class Server {
         scheduledThreadPool.scheduleAtFixedRate(() -> {
             this.printSpeed(clientID, SPEED_CALC_INTERVAL_MS, speedInfo);
         }, SPEED_CALC_DELAY_MS, SPEED_CALC_INTERVAL_MS, TimeUnit.MILLISECONDS);
-        PrintWriter outputStream;
 
         try (newConnection) {
-            outputStream = new PrintWriter(newConnection.getOutputStream(), true);
+            PrintWriter outputStream = new PrintWriter(newConnection.getOutputStream(), true);
             logger.info("Client " + clientID + " -- Start downloading the file");
             boolean isDownloadSuccessful = Protocol.download("upload/", speedInfo, clientID, newConnection.getInputStream());
             sendResultMessage(isDownloadSuccessful, clientID, outputStream);
