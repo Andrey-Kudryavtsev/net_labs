@@ -1,0 +1,43 @@
+import org.gradle.api.internal.artifacts.JavaEcosystemSupport
+
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'utf-8'
+}
+
+tasks.withType(JavaExec) {
+    systemProperty("file.encoding", "utf-8")
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    implementation 'org.projectlombok:lombok:1.18.22'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.1.1'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'org.slf4j:slf4j-api:1.7.32'
+    implementation 'ch.qos.logback:logback-classic:1.2.6'
+    implementation 'ch.qos.logback:logback-core:1.2.6'
+}
+
+task run(type: JavaExec) {
+    main('ru.nsu.kudryavtsev.andrey.Main')
+    classpath = sourceSets.main.runtimeClasspath
+    systemProperty("file.encoding", "utf-8")
+}
+
+test {
+    useJUnitPlatform()
+}
