@@ -1,6 +1,7 @@
 package ru.nsu.kudryavtsev.andrey.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -12,6 +13,7 @@ import org.apache.hc.core5.http.message.StatusLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.nsu.kudryavtsev.andrey.jsonParsingUtils.nearPlacesParsing.NearPlaces;
+import ru.nsu.kudryavtsev.andrey.jsonParsingUtils.nearPlacesParsing.Place;
 import ru.nsu.kudryavtsev.andrey.jsonParsingUtils.possiblePlacesParsing.PossiblePlaces;
 import ru.nsu.kudryavtsev.andrey.jsonParsingUtils.weatherParsing.Weather;
 
@@ -139,7 +141,7 @@ public class Model {
                 var objectMapper = new ObjectMapper();
                 PossiblePlaces possiblePlaces = null;
                 try {
-                    possiblePlaces = new PossiblePlaces(objectMapper.readTree(result.getBodyText()));
+                    possiblePlaces = objectMapper.readValue(result.getBodyText(), PossiblePlaces.class);
                 } catch (JsonProcessingException e) {
                     logger.error("Model -- " + ExceptionUtils.getStackTrace(e));
                 }
@@ -175,7 +177,7 @@ public class Model {
                 var objectMapper = new ObjectMapper();
                 NearPlaces nearPlaces = null;
                 try {
-                    nearPlaces = new NearPlaces(objectMapper.readTree(result.getBodyText()));
+                    nearPlaces = new NearPlaces(objectMapper.readValue(result.getBodyText(), new TypeReference<ArrayList<Place>>(){}));
                 } catch (JsonProcessingException e) {
                     logger.error("Model -- " + ExceptionUtils.getStackTrace(e));
                 }
@@ -212,7 +214,7 @@ public class Model {
                 var objectMapper = new ObjectMapper();
                 Weather weather = null;
                 try {
-                    weather = new Weather(objectMapper.readTree(result.getBodyText()));
+                    weather = objectMapper.readValue(result.getBodyText(), Weather.class);
                 } catch (JsonProcessingException e) {
                     logger.error("Model -- " + ExceptionUtils.getStackTrace(e));
                 }

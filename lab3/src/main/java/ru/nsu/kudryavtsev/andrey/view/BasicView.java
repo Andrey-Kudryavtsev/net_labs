@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.nsu.kudryavtsev.andrey.controller.Controller;
 import ru.nsu.kudryavtsev.andrey.jsonParsingUtils.nearPlacesParsing.NearPlaces;
+import ru.nsu.kudryavtsev.andrey.jsonParsingUtils.nearPlacesParsing.Place;
+import ru.nsu.kudryavtsev.andrey.jsonParsingUtils.possiblePlacesParsing.Hit;
 import ru.nsu.kudryavtsev.andrey.jsonParsingUtils.possiblePlacesParsing.PossiblePlaces;
 import ru.nsu.kudryavtsev.andrey.jsonParsingUtils.weatherParsing.Weather;
 import ru.nsu.kudryavtsev.andrey.model.ModelListener;
@@ -83,7 +85,7 @@ public class BasicView implements View, ModelListener {
     }
 
     @Override
-    public void drawNearPlaceInfo(NearPlaces.Place place) {
+    public void drawNearPlaceInfo(Place place) {
         logger.info("BasicView -- Got new near place info, draw possible places with near place info and weather");
         curPlaceInfo = place.getInfo();
         draw(State.POSSIBLE_WITH_INFO_AND_WEATHER);
@@ -168,8 +170,8 @@ public class BasicView implements View, ModelListener {
                 l.setEditable(false);
                 l.setLineWrap(true);
                 l.setWrapStyleWord(true);
-                double lat = possiblePlaces.getHits().get(i).getLat();
-                double lng = possiblePlaces.getHits().get(i).getLng();
+                double lat = possiblePlaces.getHits().get(i).getPoint().getLat();
+                double lng = possiblePlaces.getHits().get(i).getPoint().getLng();
                 l.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -228,7 +230,7 @@ public class BasicView implements View, ModelListener {
     }
 
     private JScrollPane createInfoScrollPane(String info) {
-        JTextArea nearPlaceInfo = new JTextArea(Objects.requireNonNullElse(info, "Нет описания\n"));
+        JTextArea nearPlaceInfo = new JTextArea(Objects.requireNonNullElse(info.replaceAll("<.*?>", ""), "Нет описания\n"));
         nearPlaceInfo.setEditable(false);
         nearPlaceInfo.setLineWrap(true);
         nearPlaceInfo.setWrapStyleWord(true);
@@ -298,7 +300,7 @@ public class BasicView implements View, ModelListener {
         contentPane.add(component, c);
     }
 
-    private String formatPossiblePlaces(PossiblePlaces.Hit place) {
+    private String formatPossiblePlaces(Hit place) {
         var str = new StringBuilder();
         if (place.getName() == null) {
             str.append("No name").append("\n");
@@ -326,7 +328,7 @@ public class BasicView implements View, ModelListener {
         return str.toString();
     }
 
-    private String formatNearPlaces(NearPlaces.Place place) {
+    private String formatNearPlaces(Place place) {
         var str = new StringBuilder();
         if (place.getName() == null) {
             str.append("No name").append("\n");
@@ -380,7 +382,7 @@ public class BasicView implements View, ModelListener {
         }
     }
 
-    private void nearPlaceClicked(NearPlaces.Place place) {
+    private void nearPlaceClicked(Place place) {
         logger.info("BasicView -- Near place clicked");
         javax.swing.SwingUtilities.invokeLater(() -> drawNearPlaceInfo(place));
     }
