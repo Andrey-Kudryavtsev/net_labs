@@ -16,6 +16,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Objects;
 
+import static javax.swing.SwingUtilities.invokeLater;
+
 public class BasicView implements View, ModelListener {
     private static final Logger logger = LoggerFactory.getLogger("APP");
     private static final int WIDTH = 800;
@@ -384,29 +386,29 @@ public class BasicView implements View, ModelListener {
 
     private void nearPlaceClicked(Place place) {
         logger.info("BasicView -- Near place clicked");
-        javax.swing.SwingUtilities.invokeLater(() -> drawNearPlaceInfo(place));
+        invokeLater(() -> drawNearPlaceInfo(place));
     }
 
     private void nearPlaceInfoClicked() {
         logger.info("BasicView -- Near place info clicked");
-        javax.swing.SwingUtilities.invokeLater(() -> drawNearPlaces(curNearPlaces));
+        invokeLater(() -> drawNearPlaces(curNearPlaces));
     }
 
     @Override
     public void possiblePlacesGetRequestDone(PossiblePlaces possiblePlaces) {
         logger.info("BasicView -- Possible places get request done, add drawing possible places in queue");
-        javax.swing.SwingUtilities.invokeLater(() -> drawPossiblePlaces(possiblePlaces));
+        invokeLater(() -> drawPossiblePlaces(possiblePlaces));
     }
 
     @Override
     public void nearPlacesGetRequestDone(NearPlaces nearPlaces) {
         logger.info("BasicView -- Near places get request done, add drawing near places in queue");
-        javax.swing.SwingUtilities.invokeLater(() -> drawNearPlaces(nearPlaces));
+        invokeLater(() -> drawNearPlaces(nearPlaces));
     }
 
     @Override
     public void weatherGetRequestDone(Weather weather) {
         logger.info("BasicView -- Weather get request done, add drawing weather in queue");
-        javax.swing.SwingUtilities.invokeLater(() -> drawWeather(weather));
+        invokeLater(() -> drawWeather(weather));
     }
 }
