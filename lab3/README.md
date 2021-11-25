@@ -8,9 +8,15 @@ git clone <HTTPS-ссылка на репозиторий>
 ```
 2. Зайти в терминал
 3. Перейти в директорию с лабораторной
-4. Выполнить команду
+4. Вписать в файл src/main/resources/api_keys.property свои ключи для следующих API:
 ```
-gradle run --args='<PATH TO PROPERTIES FILE>'
+https://docs.graphhopper.com
+https://opentripmap.io
+https://openweathermap.org
+```
+5. Выполнить команду
+```
+gradle run
 ```
 
 Приложение выводит окно и предлагает пользователю ввести интересующее его место в поисковую строку.

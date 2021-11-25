@@ -29,20 +29,21 @@ import java.util.concurrent.Future;
 
 public class Model {
     private static final Logger logger = LoggerFactory.getLogger("APP");
-    private static String GRAPHHOPPPER_API_KEY = "<DEFINE YOUR KEY IN .PROPERTIES FILE>";
-    private static String OPENTRIPMAP_API_KEY = "<DEFINE YOUR KEY IN .PROPERTIES FILE>";
-    private static String OPENWEATHERMAP_API_KEY = "<DEFINE YOUR KEY IN .PROPERTIES FILE>";
+    private final static String API_KEYS_PATH = "src/main/resources/api_keys.properties";
+    private static String GRAPHHOPPPER_API_KEY = null;
+    private static String OPENTRIPMAP_API_KEY = null;
+    private static String OPENWEATHERMAP_API_KEY = null;
     private static final int RADIUS_M = 1000;
     private static final int RATE = 3;
     private static final int LIMIT = 10;
     private ModelListener listener;
     private final CloseableHttpAsyncClient httpClient = HttpAsyncClients.createDefault();
 
-    public Model(String path) {
+    public Model() {
         logger.info("Model -- Start async http client");
         try {
             Properties apiKeys = new Properties();
-            apiKeys.load(new FileInputStream(path));
+            apiKeys.load(new FileInputStream(API_KEYS_PATH));
             GRAPHHOPPPER_API_KEY = apiKeys.getProperty("GRAPHHOPPPER_API_KEY");
             OPENTRIPMAP_API_KEY = apiKeys.getProperty("OPENTRIPMAP_API_KEY");
             OPENWEATHERMAP_API_KEY = apiKeys.getProperty("OPENWEATHERMAP_API_KEY");
