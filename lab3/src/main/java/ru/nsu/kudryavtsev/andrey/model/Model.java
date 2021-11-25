@@ -48,9 +48,6 @@ public class Model {
             OPENWEATHERMAP_API_KEY = apiKeys.getProperty("OPENWEATHERMAP_API_KEY");
         } catch (IOException e) {
             logger.error("Model -- Fail to load api keys");
-            GRAPHHOPPPER_API_KEY = null;
-            OPENTRIPMAP_API_KEY = null;
-            OPENWEATHERMAP_API_KEY = null;
         }
         httpClient.start();
     }
