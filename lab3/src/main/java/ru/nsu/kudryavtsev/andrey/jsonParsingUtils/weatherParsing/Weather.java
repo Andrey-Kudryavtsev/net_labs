@@ -1,7 +1,7 @@
 package ru.nsu.kudryavtsev.andrey.jsonParsingUtils.weatherParsing;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,13 +11,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+@Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Weather {
     private static final Logger logger = LoggerFactory.getLogger("APP");
 
-    @JsonProperty private ArrayList<WeatherDescription> weather;
-    @JsonProperty private WeatherMain main;
-    @JsonProperty private WeatherWind wind;
+    private ArrayList<WeatherDescription> weather;
+    private WeatherMain main;
+    private WeatherWind wind;
 
     public Icon getIcon() {
         if (weather != null && weather.size() != 0) {
