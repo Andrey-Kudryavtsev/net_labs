@@ -22,7 +22,8 @@ public class BasicView implements View, ModelListener {
     private static final Logger logger = LoggerFactory.getLogger("APP");
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
-    private static final Color BORDER_COLOR = new Color(0, 200, 255);
+    private static final Color BORDER_COLOR = new Color(6, 165, 196);
+    private static final Color BACKGROUND_COLOR = new Color(194, 245, 255);
     private final JFrame appFrame;
     private Controller controller;
 
@@ -42,7 +43,7 @@ public class BasicView implements View, ModelListener {
         appFrame = new JFrame();
         Container contentPane = appFrame.getContentPane();
         contentPane.setLayout(new GridBagLayout());
-        contentPane.setBackground(Color.CYAN);
+        contentPane.setBackground(BACKGROUND_COLOR);
 
         JPanel searchPanel = createSearchPanel();
         addToTop(searchPanel, contentPane);
@@ -102,7 +103,7 @@ public class BasicView implements View, ModelListener {
 
         JScrollPane placesScrollPane = createPlacesScrollPane(curPossiblePlaces);
         placesScrollPane.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 30, 10, state == State.ONLY_POSSIBLE ? 30 : 3, Color.CYAN),
+                BorderFactory.createMatteBorder(0, 30, 10, state == State.ONLY_POSSIBLE ? 30 : 3, BACKGROUND_COLOR),
                 BorderFactory.createMatteBorder(3, 3, 3, 3, BORDER_COLOR)
         ));
 
@@ -113,18 +114,18 @@ public class BasicView implements View, ModelListener {
             if (state == State.POSSIBLE_WITH_NEAR_AND_WEATHER) {
                 scrollPane = createNearPlacesScrollPane(curNearPlaces);
                 scrollPane.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createMatteBorder(0, 3, 10, 30, Color.CYAN),
+                        BorderFactory.createMatteBorder(0, 3, 10, 30, BACKGROUND_COLOR),
                         BorderFactory.createMatteBorder(3, 3, 3, 3, BORDER_COLOR)
                 ));
             } else if (state == State.POSSIBLE_WITH_INFO_AND_WEATHER) {
                 scrollPane = createInfoScrollPane(curPlaceInfo);
                 scrollPane.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createMatteBorder(0, 3, 10, 30, Color.CYAN),
+                        BorderFactory.createMatteBorder(0, 3, 10, 30, BACKGROUND_COLOR),
                         BorderFactory.createMatteBorder(3, 3, 3, 3, BORDER_COLOR)
                 ));
             }
             JPanel weatherPanel = createWeatherPanel(curWeather);
-            weatherPanel.setBorder(BorderFactory.createMatteBorder(0, 3, 0, 30, Color.CYAN));
+            weatherPanel.setBorder(BorderFactory.createMatteBorder(0, 3, 0, 30, BACKGROUND_COLOR));
             JPanel generalPanel = createGeneralPanel(weatherPanel, scrollPane);
             JSplitPane splitPane = createSplitPane(placesScrollPane, generalPanel);
             addToBottom(splitPane, contentPane);
@@ -136,9 +137,9 @@ public class BasicView implements View, ModelListener {
 
     private JPanel createSearchPanel() {
         JPanel searchPanel = new JPanel();
-        searchPanel.setBackground(Color.CYAN);
+        searchPanel.setBackground(BACKGROUND_COLOR);
         searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.LINE_AXIS));
-        searchPanel.setBorder(BorderFactory.createMatteBorder(10, 0, 20, 0, Color.CYAN));
+        searchPanel.setBorder(BorderFactory.createMatteBorder(10, 0, 20, 0, BACKGROUND_COLOR));
 
         JTextField searchField = new JTextField();
 
@@ -226,7 +227,7 @@ public class BasicView implements View, ModelListener {
         weatherPanel.add(weatherArea);
         weatherPanel.setMaximumSize(new Dimension(250, 130));
         weatherPanel.setPreferredSize(new Dimension(250, 130));
-        weatherPanel.setBackground(Color.CYAN);
+        weatherPanel.setBackground(BACKGROUND_COLOR);
 
         return weatherPanel;
     }
@@ -252,7 +253,7 @@ public class BasicView implements View, ModelListener {
         }
 
         JPanel generalPanel = new JPanel();
-        generalPanel.setBackground(Color.CYAN);
+        generalPanel.setBackground(BACKGROUND_COLOR);
         generalPanel.setLayout(new BoxLayout(generalPanel, BoxLayout.PAGE_AXIS));
         generalPanel.add(first);
         generalPanel.add(Box.createRigidArea(new Dimension(0, 30)));

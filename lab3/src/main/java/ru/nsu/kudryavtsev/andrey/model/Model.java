@@ -17,27 +17,41 @@ import ru.nsu.kudryavtsev.andrey.jsonParsingUtils.nearPlacesParsing.Place;
 import ru.nsu.kudryavtsev.andrey.jsonParsingUtils.possiblePlacesParsing.PossiblePlaces;
 import ru.nsu.kudryavtsev.andrey.jsonParsingUtils.weatherParsing.Weather;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class Model {
     private static final Logger logger = LoggerFactory.getLogger("APP");
-    private static final String GRAPHHOPPPER_API_KEY = "12fe0250-b841-43ed-bdac-b631d5a4e333";
-    private static final String OPENTRIPMAP_API_KEY = "5ae2e3f221c38a28845f05b69cb3b0c55c2688f7fb727d686e360097";
-    private static final String OPENWEATHERMAP_API_KEY = "bb032ba7cdac01a6434ad0f339552246";
+    private static String GRAPHHOPPPER_API_KEY = "<DEFINE YOUR KEY IN .PROPERTIES FILE>";
+    private static String OPENTRIPMAP_API_KEY = "<DEFINE YOUR KEY IN .PROPERTIES FILE>";
+    private static String OPENWEATHERMAP_API_KEY = "<DEFINE YOUR KEY IN .PROPERTIES FILE>";
     private static final int RADIUS_M = 1000;
     private static final int RATE = 3;
     private static final int LIMIT = 10;
     private ModelListener listener;
     private final CloseableHttpAsyncClient httpClient = HttpAsyncClients.createDefault();
 
-    public Model() {
+    public Model(String path) {
         logger.info("Model -- Start async http client");
+        try {
+            Properties apiKeys = new Properties();
+            apiKeys.load(new FileInputStream(path));
+            GRAPHHOPPPER_API_KEY = apiKeys.getProperty("GRAPHHOPPPER_API_KEY");
+            OPENTRIPMAP_API_KEY = apiKeys.getProperty("OPENTRIPMAP_API_KEY");
+            OPENWEATHERMAP_API_KEY = apiKeys.getProperty("OPENWEATHERMAP_API_KEY");
+        } catch (IOException e) {
+            logger.error("Model -- Fail to load api keys");
+            GRAPHHOPPPER_API_KEY = null;
+            OPENTRIPMAP_API_KEY = null;
+            OPENWEATHERMAP_API_KEY = null;
+        }
         httpClient.start();
     }
 
@@ -53,7 +67,7 @@ public class Model {
     public void httpGetPossiblePlaces(String query) throws UnsupportedEncodingException {
         String queryUtf = URLEncoder.encode(query, StandardCharsets.UTF_8.toString());
         String url = String.format("https://graphhopper.com/api/1/geocode?q=%s&limit=%s&locale=%s&debug=%s&key=%s",
-                                    queryUtf, LIMIT, "en", "debug", GRAPHHOPPPER_API_KEY);
+                queryUtf, LIMIT, "en", "debug", GRAPHHOPPPER_API_KEY);
         SimpleHttpRequest getPossiblePlacesRequest = SimpleRequestBuilder.get(url).build();
         logger.info("Model -- Executing request " + getPossiblePlacesRequest);
 
@@ -66,7 +80,7 @@ public class Model {
 
     public void httpGetNearPlaces(double lat, double lng) throws UnsupportedEncodingException {
         String url = String.format("https://api.opentripmap.com/0.1/ru/places/radius?rate=%s&limit=%s&radius=%s&lon=%s&lat=%s&format=%s&apikey=%s",
-                                    RATE, LIMIT, RADIUS_M, lng, lat, "json", OPENTRIPMAP_API_KEY);
+                RATE, LIMIT, RADIUS_M, lng, lat, "json", OPENTRIPMAP_API_KEY);
         SimpleHttpRequest getNearPlacesRequest = SimpleRequestBuilder.get(url).build();
         logger.info("Model -- Executing request " + getNearPlacesRequest);
 
@@ -79,7 +93,7 @@ public class Model {
 
     public void httpGetWeather(double lat, double lng) {
         String url = String.format("https://api.openweathermap.org/data/2.5/weather?lang=ru&units=metric&lat=%s&lon=%s&appid=%s",
-                                    lat, lng, OPENWEATHERMAP_API_KEY);
+                lat, lng, OPENWEATHERMAP_API_KEY);
         SimpleHttpRequest getWeatherRequest = SimpleRequestBuilder.get(url).build();
         logger.info("Model -- Executing request " + getWeatherRequest);
 
@@ -99,7 +113,7 @@ public class Model {
         ArrayList<Future<SimpleHttpResponse>> responses = new ArrayList<>();
         for (int i = 0; i < nearPlaces.getPlaces().size(); i++) {
             String url = String.format("https://api.opentripmap.com/0.1/ru/places/xid/%s?apikey=%s",
-                                        nearPlaces.getPlaces().get(i).getXid(), OPENTRIPMAP_API_KEY);
+                    nearPlaces.getPlaces().get(i).getXid(), OPENTRIPMAP_API_KEY);
             SimpleHttpRequest getNearPlaceInfo = SimpleRequestBuilder.get(url).build();
             logger.info("Model -- Executing request " + getNearPlaceInfo);
 
@@ -177,7 +191,8 @@ public class Model {
                 var objectMapper = new ObjectMapper();
                 NearPlaces nearPlaces = null;
                 try {
-                    nearPlaces = new NearPlaces(objectMapper.readValue(result.getBodyText(), new TypeReference<ArrayList<Place>>(){}));
+                    nearPlaces = new NearPlaces(objectMapper.readValue(result.getBodyText(), new TypeReference<ArrayList<Place>>() {
+                    }));
                 } catch (JsonProcessingException e) {
                     logger.error("Model -- " + ExceptionUtils.getStackTrace(e));
                 }
