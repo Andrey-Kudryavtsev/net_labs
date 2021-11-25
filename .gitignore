@@ -28,4 +28,3 @@ build
 gradle*
 res
 lib
-*.properties
