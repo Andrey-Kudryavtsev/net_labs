@@ -233,7 +233,12 @@ public class BasicView implements View, ModelListener {
     }
 
     private JScrollPane createInfoScrollPane(String info) {
-        JTextArea nearPlaceInfo = new JTextArea(Objects.requireNonNullElse(info.replaceAll("<.*?>", ""), "Нет описания\n"));
+        JTextArea nearPlaceInfo;
+        if (info == null) {
+            nearPlaceInfo = new JTextArea("Нет описания\n");
+        } else {
+            nearPlaceInfo = new JTextArea(info.replaceAll("<.*?>", ""));
+        }
         nearPlaceInfo.setEditable(false);
         nearPlaceInfo.setLineWrap(true);
         nearPlaceInfo.setWrapStyleWord(true);
